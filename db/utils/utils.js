@@ -16,4 +16,16 @@ exports.makeRefObj = articles => {
   return result;
 };
 
-exports.formatComments = (comments, articleRef) => {};
+exports.formatComments = (comments, articleRef) => {
+  const formattedComments = [];
+  for (let i = 0; i < comments.length; i++) {
+    formattedComments.push({});
+    formattedComments[i].author = comments[i].created_by;
+    formattedComments[i].article_id = articleRef[comments[i].belongs_to];
+    formattedComments[i].votes = comments[i].votes;
+    formattedComments[i].body = comments[i].body;
+    formattedComments[i].created_at = new Date(comments[i].created_at);
+  }
+
+  return formattedComments;
+};
