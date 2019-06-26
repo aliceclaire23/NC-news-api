@@ -3,7 +3,7 @@ const {
   articleData,
   commentData,
   userData
-} = require('../index.js');
+} = require('../data/index');
 
 const { formatDate, formatComments, makeRefObj } = require('../utils/utils');
 
