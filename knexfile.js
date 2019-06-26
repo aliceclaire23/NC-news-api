@@ -1,6 +1,4 @@
 const ENV = process.env.NODE_ENV || 'development';
-const development = require('./db/development-data');
-const test = require('./db/test-data');
 
 const baseConfig = {
   client: 'pg',
@@ -25,9 +23,4 @@ const customConfig = {
   }
 };
 
-const dataConfig = {
-  development,
-  test
-};
-
-module.exports = { ...customConfig[ENV], ...baseConfig, dataConfig };
+module.exports = { ...customConfig[ENV], ...baseConfig };
