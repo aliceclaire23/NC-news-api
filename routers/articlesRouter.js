@@ -9,12 +9,14 @@ const {
 articlesRouter
   .route('/:article_id')
   .get(getArticles)
-  .patch(patchArticle);
+  .patch(patchArticle)
+  .all(send405Error);
 
 articlesRouter
   .route('/:article_id/comments')
   .post(postComment)
-  .get(getCommentsByArticleId);
+  .get(getCommentsByArticleId)
+  .all(send405Error);
 
 articlesRouter.route('/').get(getArticles);
 
