@@ -1,6 +1,6 @@
 const { connection } = require('../db/connection');
 
-exports.fetchArticles = ({ article_id }) => {
+exports.fetchArticles = (article_id, sort_by, order) => {
   return connection
     .select('articles.*')
     .from('articles')
@@ -9,7 +9,8 @@ exports.fetchArticles = ({ article_id }) => {
     .groupBy('articles.article_id')
     .modify(query => {
       if (article_id) query.where('articles.article_id', article_id);
-    });
+    })
+    .orderBy(sort_by || 'created_at', order || 'desc');
 };
 
 exports.updateArticle = (article_id, inc_votes) => {
