@@ -1,7 +1,10 @@
 const express = require('express');
 const commentsRouter = express.Router();
-const { patchComment } = require('../controllers/comments');
+const { patchComment, deleteComment } = require('../controllers/comments');
 
-commentsRouter.route('/:comment_id').patch(patchComment);
+commentsRouter
+  .route('/:comment_id')
+  .patch(patchComment)
+  .delete(deleteComment);
 
 module.exports = commentsRouter;

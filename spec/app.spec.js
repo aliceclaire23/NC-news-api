@@ -250,4 +250,9 @@ describe('/api', () => {
         });
     });
   });
+  describe('DELETE /api/comments/:comment_id', () => {
+    it('DELETE comment by comment_id', () => {
+      return request.delete('/api/comments/1').expect(204);
+    });
+  });
 });
