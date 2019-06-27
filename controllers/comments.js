@@ -1,4 +1,8 @@
-const { createComment, fetchComments } = require('../models/comments');
+const {
+  createComment,
+  fetchComments,
+  updateComment
+} = require('../models/comments');
 
 exports.postComment = (req, res, next) => {
   const { article_id } = req.params;
@@ -16,6 +20,16 @@ exports.getCommentsByArticleId = (req, res, next) => {
   fetchComments(article_id, sort_by, order)
     .then(comments => {
       res.status(200).send({ comments });
+    })
+    .catch(next);
+};
+
+exports.patchComment = (req, res, next) => {
+  const { comment_id } = req.params;
+  const inc_votes = req.body.inc_votes;
+  updateComment(comment_id, inc_votes)
+    .then(patchedComment => {
+      res.status(200).send({ comment: patchedComment[0] });
     })
     .catch(next);
 };

@@ -199,6 +199,14 @@ describe('/api', () => {
         expect(res.body.articles).to.be.descendingBy('author');
       });
     });
+    it('status:400 for invalid sort by parameter', () => {
+      return request
+        .get('/api/articles/?sort_by=HERES_GOOD&order=asc')
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).to.equal('bad request');
+        });
+    });
     it('GET sort order is descending default', () => {
       return request.get('/api/articles/').then(res => {
         expect(res.body.articles).to.be.descending;
@@ -211,7 +219,35 @@ describe('/api', () => {
           expect(res.body.articles).to.be.ascendingBy('author');
         });
     });
-    // it('GET can be filtered by author using query', () => {});
-    // it('GET can be filtered by topic using  query', () => {});
+    it('GET can be filtered by author using query', () => {
+      return request.get('/api/articles/?author=jessjelly').then(res => {
+        expect(res.body.articles.length).to.equal(7);
+      });
+    });
+    it('GET can be filtered by topic using  query', () => {
+      return request.get('/api/articles/?topic=coding').then(res => {
+        expect(res.body.articles.length).to.equal(12);
+      });
+    });
+  });
+  describe('PATCH /api/comments/:comment_id', () => {
+    it('PATCH comment with additional votes', () => {
+      return request
+        .patch('/api/comments/1')
+        .send({ inc_votes: 2 })
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment.votes).to.equal(1);
+        });
+    });
+    it('status:400 when patching a value of incorrect type', () => {
+      return request
+        .patch('/api/comments/1')
+        .send({ inc_votes: 'not a number!' })
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).to.equal('bad request');
+        });
+    });
   });
 });
