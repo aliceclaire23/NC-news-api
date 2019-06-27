@@ -1,6 +1,7 @@
 const express = require('express');
 const usersRouter = express.Router();
 const { getUserByUsername } = require('../controllers/users');
+const { send405Error } = require('../errors');
 
 usersRouter
   .route('/:username')

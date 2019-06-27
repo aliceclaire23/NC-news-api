@@ -5,6 +5,7 @@ const {
   postComment,
   getCommentsByArticleId
 } = require('../controllers/comments');
+const { send405Error } = require('../errors');
 
 articlesRouter
   .route('/:article_id')
