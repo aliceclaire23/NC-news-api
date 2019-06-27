@@ -11,11 +11,12 @@ exports.createComment = (article_id, newComment) => {
     .returning('*');
 };
 
-exports.fetchComments = article_id => {
+exports.fetchComments = (article_id, sort_by, order) => {
   return connection
     .select('*')
     .from('comments')
     .modify(query => {
       if (article_id) query.where('comments.article_id', article_id);
-    });
+    })
+    .orderBy(sort_by || 'created_at', order || 'desc');
 };
