@@ -4,7 +4,6 @@ exports.createComment = (article_id, newComment) => {
   newComment.author = newComment.username;
   delete newComment.username;
   newComment.article_id = article_id;
-  newComment.created_at = new Date();
   return connection
     .insert(newComment)
     .into('comments')
