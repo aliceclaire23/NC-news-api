@@ -4,7 +4,11 @@ exports.getArticles = (req, res, next) => {
   const { article_id } = req.params;
   const { sort_by, order, author, topic } = req.query;
   fetchArticles(article_id, sort_by, order, author, topic)
-    .then(articles => res.status(200).send({ articles }))
+    .then(articles => {
+      if (articles.length < 1) {
+        res.status(404).send({ msg: 'not found' });
+      } else res.status(200).send({ articles });
+    })
     .catch(next);
 };
 

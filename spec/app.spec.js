@@ -230,12 +230,12 @@ describe('/api', () => {
       });
     });
     it('status:404 when provided a non-existent topic', () => {
-      // return request
-      //   .get('/api/articles/?topic=not-a-topic')
-      //   .expect(404)
-      //   .then(({ body: { msg } }) => {
-      //     expect(msg).to.equal('not found');
-      //   });
+      return request
+        .get('/api/articles?topic=not-a-topic')
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).to.equal('not found');
+        });
     });
   });
   describe('PATCH /api/comments/:comment_id', () => {
