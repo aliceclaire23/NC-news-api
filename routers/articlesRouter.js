@@ -19,6 +19,9 @@ articlesRouter
   .get(getCommentsByArticleId)
   .all(send405Error);
 
-articlesRouter.route('/').get(getArticles);
+articlesRouter
+  .route('/')
+  .get(getArticles)
+  .all(send405Error);
 
 module.exports = articlesRouter;
