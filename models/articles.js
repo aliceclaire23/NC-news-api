@@ -1,6 +1,22 @@
 const { connection } = require('../db/connection');
 
-exports.fetchArticles = (article_id, sort_by, order, author, topic) => {
+function checkTopics(topic) {
+  return connection
+    .select('articles.topic')
+    .from('articles')
+    .groupBy('articles.topic')
+    .then(topicsObjs => {
+      const topics = [];
+      topicsObjs.forEach(topicObj => {
+        topics.push(topicObj.topic);
+      });
+      if (topic && !topics.includes(topic)) {
+        //Promise.reject goes here???
+      }
+    });
+}
+
+exports.fetchArticles = (article_id, sort_by, order, author, topic, res) => {
   return connection
     .select('articles.*')
     .from('articles')
@@ -8,6 +24,7 @@ exports.fetchArticles = (article_id, sort_by, order, author, topic) => {
     .leftJoin('comments', 'comments.article_id', 'articles.article_id')
     .groupBy('articles.article_id')
     .modify(query => {
+      checkTopics(topic, res);
       if (article_id) query.where('articles.article_id', article_id);
       if (author) query.where('articles.author', author);
       if (topic) query.where('articles.topic', topic);
