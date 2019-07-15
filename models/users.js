@@ -1,7 +1,7 @@
-const { knex } = require('../db/connection');
+const { connection } = require('../db/connection');
 
 exports.fetchUser = ({ username }) => {
-  return knex
+  return connection
     .select('*')
     .from('users')
     .where({ username: username });

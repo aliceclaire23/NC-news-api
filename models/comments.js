@@ -1,17 +1,17 @@
-const { knex } = require('../db/connection');
+const { connection } = require('../db/connection');
 
 exports.createComment = (article_id, newComment) => {
   newComment.author = newComment.username;
   delete newComment.username;
   newComment.article_id = article_id;
-  return knex
+  return connection
     .insert(newComment)
     .into('comments')
     .returning('*');
 };
 
 exports.fetchComments = (article_id, sort_by, order) => {
-  return knex
+  return connection
     .select('*')
     .from('comments')
     .modify(query => {
@@ -21,20 +21,20 @@ exports.fetchComments = (article_id, sort_by, order) => {
 };
 
 exports.updateComment = (comment_id, inc_votes) => {
-  return knex('comments')
+  return connection('comments')
     .where({ comment_id: comment_id })
     .increment('votes', inc_votes)
     .returning('*');
 };
 
 exports.destroyComment = comment_id => {
-  return knex('comments')
+  return connection('comments')
     .where({ comment_id: comment_id })
     .delete();
 };
 
 exports.checkCommentId = comment_id => {
-  return knex
+  return connection
     .select('comments.*')
     .from('comments')
     .where('comments.comment_id', comment_id);
