@@ -1,7 +1,7 @@
-const { connection } = require('../db/connection');
+const { knex } = require('../db/connection');
 
 exports.fetchArticles = (article_id, sort_by, order, author, topic, res) => {
-  return connection
+  return knex
     .select('articles.*')
     .from('articles')
     .count('articles.article_id as comment_count')
@@ -16,14 +16,14 @@ exports.fetchArticles = (article_id, sort_by, order, author, topic, res) => {
 };
 
 exports.updateArticle = (article_id, inc_votes = 0) => {
-  return connection('articles')
+  return knex('articles')
     .where({ article_id: article_id })
     .increment('votes', inc_votes)
     .returning('*');
 };
 
 exports.checkArticleId = article_id => {
-  return connection
+  return knex
     .select('articles.*')
     .from('articles')
     .where('articles.article_id', article_id);
