@@ -7,14 +7,20 @@ exports.getArticles = (req, res, next) => {
     .then(articles => {
       if (articles.length < 1) {
         res.status(404).send({ msg: 'not found' });
-      } else res.status(200).send({ articles });
+      } else if (articles.length === 1) {
+        const article = articles[0];
+        res.status(200).send({ article });
+      } else {
+        res.status(200).send({ articles });
+      }
     })
     .catch(next);
 };
 
 exports.patchArticle = (req, res, next) => {
   const { article_id } = req.params;
-  const inc_votes = req.body.inc_votes;
+  const inc_votes = req.body.inc_votes || 0;
+
   updateArticle(article_id, inc_votes)
     .then(patchedArticle => {
       res.status(200).send({ article: patchedArticle[0] });
