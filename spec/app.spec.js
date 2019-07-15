@@ -2,13 +2,13 @@ const app = require('../app');
 const chai = require('chai');
 const expect = chai.expect;
 const request = require('supertest')(app);
-const { connection } = require('../db/connection');
+const { knex } = require('../db/connection');
 chai.use(require('chai-sorted'));
 
 describe('/api', () => {
-  beforeEach(() => connection.seed.run());
+  beforeEach(() => knex.seed.run());
   after(() => {
-    connection.destroy();
+    knex.destroy();
   });
   describe('GET /api/topics', () => {
     it('GET all topics', () => {
