@@ -15,9 +15,16 @@ exports.fetchArticles = (article_id, sort_by, order, author, topic, res) => {
     .orderBy(sort_by || 'created_at', order || 'desc');
 };
 
-exports.updateArticle = (article_id, inc_votes) => {
+exports.updateArticle = (article_id, inc_votes = 0) => {
   return connection('articles')
     .where({ article_id: article_id })
     .increment('votes', inc_votes)
     .returning('*');
+};
+
+exports.checkArticleId = article_id => {
+  return connection
+    .select('articles.*')
+    .from('articles')
+    .where('articles.article_id', article_id);
 };
