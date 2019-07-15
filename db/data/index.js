@@ -3,8 +3,9 @@ const development = require('./development-data');
 const test = require('./test-data');
 
 const dataConfig = {
+  test,
   development,
-  test
+  production: development
 };
 
 module.exports = dataConfig[ENV];
