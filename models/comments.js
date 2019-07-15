@@ -32,3 +32,10 @@ exports.destroyComment = comment_id => {
     .where({ comment_id: comment_id })
     .delete();
 };
+
+exports.checkCommentId = comment_id => {
+  return connection
+    .select('comments.*')
+    .from('comments')
+    .where('comments.comment_id', comment_id);
+};
