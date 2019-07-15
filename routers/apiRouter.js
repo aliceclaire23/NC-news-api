@@ -6,7 +6,13 @@ const {
   commentsRouter
 } = require('./index');
 const apiRouter = express.Router();
+const { send405Error } = require('../errors');
+const { getEndpoints } = require('../controllers/api');
 
+apiRouter
+  .route('/')
+  .get(getEndpoints)
+  .all(send405Error);
 apiRouter.use('/topics', topicsRouter);
 apiRouter.use('/users', usersRouter);
 apiRouter.use('/articles', articlesRouter);
