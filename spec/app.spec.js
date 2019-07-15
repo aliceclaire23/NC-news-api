@@ -26,8 +26,15 @@ describe('/api', () => {
         .get('/api/users/jessjelly')
         .expect(200)
         .then(({ body: { user } }) => {
-          expect(user[0]).to.contain.keys('username', 'avatar_url', 'name');
-          expect(user.length).to.equal(1);
+          expect(user).to.contain.keys('username', 'avatar_url', 'name');
+        });
+    });
+    it('status:404 for an invalid username', () => {
+      return request
+        .get('/api/users/not-a-username')
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).to.equal('not found');
         });
     });
   });
@@ -36,8 +43,8 @@ describe('/api', () => {
       return request
         .get('/api/articles/1')
         .expect(200)
-        .then(({ body: { articles } }) => {
-          expect(articles[0]).to.contain.keys(
+        .then(({ body: { article } }) => {
+          expect(article).to.contain.keys(
             'article_id',
             'title',
             'body',
@@ -47,8 +54,15 @@ describe('/api', () => {
             'created_at',
             'comment_count'
           );
-          expect(articles.length).to.equal(1);
-          expect(articles[0].comment_count).to.equal('8');
+          expect(article.comment_count).to.equal('8');
+        });
+    });
+    it('status:404 for an invalid article id', () => {
+      return request
+        .get('/api/articles/1000')
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).to.equal('not found');
         });
     });
   });
@@ -70,6 +84,17 @@ describe('/api', () => {
         .then(({ body: { msg } }) => {
           expect(msg).to.equal('bad request');
         });
+    });
+    it('ignores a patch request with no information in the request body', () => {
+      return (
+        request
+          .patch('/api/articles/1')
+          .send()
+          //.expect(100)
+          .then(({ body: { article } }) => {
+            expect(article.votes).to.equal(0);
+          })
+      );
     });
   });
   describe('POST /api/articles/:article_id/comments', () => {
@@ -126,6 +151,18 @@ describe('/api', () => {
         .expect(400)
         .then(({ body: { msg } }) => {
           expect(msg).to.equal('bad request');
+        });
+    });
+    it('status: 404 when posting to an invalid article_id', () => {
+      return request
+        .post('/api/articles/1000/comments')
+        .send({
+          username: 'jessjelly',
+          body: 'hello world!'
+        })
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).to.equal('not found');
         });
     });
   });
@@ -237,6 +274,25 @@ describe('/api', () => {
           expect(msg).to.equal('not found');
         });
     });
+    it('status:404 when provided a non-existent author', () => {
+      return request
+        .get('/api/articles?author=not-a-author')
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).to.equal('not found');
+        });
+    });
+  });
+  describe('PATCH /api/articles', () => {
+    it('status:405', () => {
+      return request
+        .patch('/api/articles')
+        .send({})
+        .expect(405)
+        .then(({ body: { msg } }) => {
+          expect(msg).to.equal('method not allowed');
+        });
+    });
   });
   describe('PATCH /api/comments/:comment_id', () => {
     it('PATCH comment with additional votes', () => {
@@ -257,10 +313,63 @@ describe('/api', () => {
           expect(msg).to.equal('bad request');
         });
     });
+    it('status:200 and sends unchanged comment when no inc_votes is provideded in the request body', () => {
+      return request
+        .patch('/api/comments/1')
+        .send({})
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment.votes).to.equal(-1);
+        });
+    });
+    it('status:404 when PATCH contains valid comment_id that does not exist', () => {
+      return request
+        .patch('/api/comments/1000')
+        .send({ inc_votes: 1 })
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).to.equal('not found');
+        });
+    });
   });
   describe('DELETE /api/comments/:comment_id', () => {
     it('DELETE comment by comment_id', () => {
-      return request.delete('/api/comments/1').expect(204);
+      return request.delete('/api/comments/17').expect(204);
+    });
+    it('status: 404 when deleting an invalid comment', () => {
+      return request
+        .delete('/api/comments/1000')
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).to.equal('not found');
+        });
+    });
+  });
+  describe('GET /api', () => {
+    it('responds with a json decribing all available endpoints', () => {
+      return request
+        .get('/api')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).to.have.keys(
+            'GET /api',
+            'GET /api/articles',
+            'GET /api/articles/:articles_id',
+            'GET /api/topics',
+            'GET /api/users/:username',
+            'PATCH /api/articles/:article_id'
+          );
+        });
+    });
+    describe('DELETE /api', () => {
+      it('status:405', () => {
+        return request
+          .delete('/api')
+          .expect(405)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal('method not allowed');
+          });
+      });
     });
   });
 });
